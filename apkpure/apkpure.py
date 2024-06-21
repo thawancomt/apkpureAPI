@@ -138,7 +138,7 @@ class ApkPure:
         apps_in_list_of_apps = list_of_apps.find_all("li") # LI's
         
         all_results = [
-            self.extract_info(first_app)
+            self.extract_info_from_search(first_app)
         ]
         
         for app in apps_in_list_of_apps:
