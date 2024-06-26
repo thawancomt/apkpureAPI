@@ -62,31 +62,26 @@ Here's a quick example of how to use the `ApkPure` class:
 ```python
 from apkpure.apkpure import ApkPure
 
-# Initialize the API
-api = ApkPure()
+# Import the API
+from apkpure.apkpure import ApkPure
 
-# Search for an app and get the first one result
-top_result = api.search_top("WhatsApp")
-print(top_result)
+API = ApkPure()
 
-# Search for all results for a query
-all_results = api.search_all("WhatsApp")
-print(all_results)
+# Get the first result from app
+top_result = API.get_first_app_result(name='App Name')
 
-# Get app versions, Note: the versions is from the first one result from the search_top method
-versions = api.get_versions("WhatsApp")
-print(versions)
+# Get all apps from result
+all_results = API.get_all_apps_results(name='App Name')
 
-# Get app info, Note: the info is from the first one result from the search_top method
-app_info = api.get_info("WhatsApp")
-print(app_info)
+# Get info from an app
+app_info = API.get_info(name='App Name')
 
-# Download the latest version of an app, Note: the latest version is from the first one result from the search_top method
-download_path = api.download("whatsapp")
-print(download_path)
+# Get the versions of an app
+versions = API.get_versions(name='App Name')
 
-# Download a specific version of an app
-api.download("WhatsApp", version="2.21.1.15")
+# Downlaod an app, you can pass a version and also the type of file between apk and xapk
+# version and xapk are optional parameters
+API.download(name='App Name', version='1.1.1', xapk=True)
 ```
 
 #### Class: `ApkPure`
