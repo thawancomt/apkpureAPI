@@ -29,8 +29,9 @@ So I decided to use `cloudscraper`.
 So in this way I can call it from any method, and avoid repetition of code. and more than it, The apkpure methods just be responsible to get the
 html elements that there are the information that we need to extract, so `extractors` module will be used only for extracting this information.
 then the extractors module through the it specified methods will return the information that we need.
+# `From`
 ``` python
-# From
+
 def search_top_app(self):
         # from
         def get_info(self, name: str) -> str:
@@ -68,19 +69,24 @@ def search_top_app(self):
         }
         return json.dumps(new)
 
-        # To it
-        def get_info(self, name: str) -> dict:
+        
+        
 
-        top_app = self.get_first_app_result(name)
-        first_app_from_search : dict = json.loads(top_app) 
+```
+# `To it`
+```python
+    def get_info(self, name: str) -> dict:
 
-        info_url =  str(first_app_from_search.get('package_url')) + '/download'
-        html_obj = self.__soup_factory(info_url)
+            top_app = self.get_first_app_result(name)
+            first_app_from_search : dict = json.loads(top_app) 
 
-        return json.dumps(
-            scraper.extract_info_from_get_info(html_obj) | first_app_from_search,
-            indent=4
-            )
+            info_url =  str(first_app_from_search.get('package_url')) + '/download'
+            html_obj = self.__soup_factory(info_url)
+
+            return json.dumps(
+                scraper.extract_info_from_get_info(html_obj) | first_app_from_search,
+                indent=4
+                )
 
 ```
 
