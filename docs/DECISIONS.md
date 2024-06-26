@@ -5,7 +5,7 @@ improved readablitiy, more consisous.
 
 # 1 - I decide to create a method to get response instead to try retrieve it in each method.
 the reason is when I created the get response I can use it in all methods. avoinding repetition of code.
-`` python
+``` python
     # From
     def search_top_app(self):
             response = self.get_response('https://apkpure.com/top-apps')
@@ -18,7 +18,7 @@ the reason is when I created the get response I can use it in all methods. avoin
             response = self.__get_response('https://apkpure.com/top-apps')
             # and the exception will be threated in the get_response method.
 # To
-``
+```
 
 # 2 - I decided to use `cloudscraper` cause the ApkPure website is protected by Cloudflare.
 I used `cloudscraper` because it was easier for me to bypass its blocking.
