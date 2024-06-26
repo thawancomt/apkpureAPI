@@ -43,21 +43,26 @@ This will return a dictionary containing information about the app, including it
 
 To retrieve all versions of an app, use the `get_versions()` method and pass in the name of the app you're interested in:
 ```python
-versions = API.get_versions('App Name')
-```
-This will return a list of dictionaries containing information about each version of the app.
+# Import the API
+from apkpure.apkpure import ApkPure
 
-**Downloading Apps**
+API = ApkPure()
 
-To download an APK or XAPK, use the `download()` method and pass in the name of the app you're interested in:
-```python
-API.download('App Name')
-```
-You can also specify a specific version to download by passing in the `version` parameter and the `xapk` for true to download the xapk file:
-```python
-API.download('App Name', '1.0.2', xapk=False)  # Download version 1.0.2
-# or if you want download a xapk
-API.download('App Name', '1.0.2', xapk=True)  # Download version 1.0.2 as xapk if it are available 
+# Get the first result from app
+top_result = API.get_first_app_result(name='App Name')
+
+# Get all apps from result
+all_results = API.get_all_apps_results(name='App Name')
+
+# Get info from an app
+app_info = API.get_info(name='App Name')
+
+# Get the versions of an app
+versions = API.get_versions(name='App Name')
+
+# Downlaod an app, you can pass a version and also the type of file between apk and xapk
+# version and xapk are optional parameters
+API.download(name='App Name', version='1.1.1', xapk=True)  # Download version 1.0.2 as xapk if it are available 
 ```
 
 **Tips and Tricks**
