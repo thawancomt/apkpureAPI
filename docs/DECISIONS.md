@@ -8,7 +8,7 @@ the reason is when I created the get response I can use it in all methods. avoin
 ``` python
     # From
     def search_top_app(self):
-            response = self.get_response('https://apkpure.com/top-apps')
+            response = request.get('https://apkpure.com/top-apps')
             if response.status_code == 200:
                 # DO SOMETHING
             else:
