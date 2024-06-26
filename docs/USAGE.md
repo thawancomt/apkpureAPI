@@ -1,4 +1,4 @@
-Here is the "How to Use" text for the ApkPure API:
+Here is the "How to Use" ApkPure API:
 
 **Introduction**
 
