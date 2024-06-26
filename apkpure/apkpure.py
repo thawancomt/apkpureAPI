@@ -28,7 +28,7 @@ class ApkPure:
                 "No search query provided!",
             )
 
-    def __soup_factory(self, url) -> BeautifulSoup:
+    def __soup_factory(self, url : str) -> BeautifulSoup:
         """Returns soup object from an given URL,
         using cloudscraper to avoid cloudflare anti-bot protection
         
@@ -127,7 +127,7 @@ class ApkPure:
         
         return json.dumps(all_results, indent=4)
 
-    def get_versions(self, name) -> str:
+    def get_versions(self, name : str ) -> str:
         """Get all versions of the query app.
         The app is the first result from the query, so check if get_first_app_result is
         giving you what app that you want.
@@ -206,7 +206,7 @@ class ApkPure:
             )
         
     
-    def download(self, name: str, version: str = None, XAPK: bool = False) -> str | None:
+    def download(self, name: str, version: str = None, xapk: bool = False) -> str | None:
         """Download an apk or xapk.
         the downloaded app is the first result from the get_first_app_result() method, so check it before.
         
@@ -218,25 +218,28 @@ class ApkPure:
         """
         
         self.__check_name(name)
-        
-        app_type = 'XAPK' if XAPK else 'APK'
-        
+
+        app_type = 'XAPK' if xapk else 'APK'
+
         package_info : dict = json.loads(self.get_info(name))
-        
+
         version_code = None
+        
         if version:
             versions = json.loads(self.get_versions(name))
             for version_ in versions:
                 if str(version_.get('version')) == version:
                     version_code = version_.get("version_code")
                     break
-        
-        version_code = version_code or package_info.get('package_version_code')
-        
+
+            if not version_code:
+                print('The passed version is not founded')
+                version_code = version_code or package_info.get('package_version_code')
+
         base_url = f'https://d.apkpure.com/b/{app_type}/' \
-                + package_info.get('package_name') \
-                + '?versionCode=' \
-                + version_code
+                    + package_info.get('package_name') \
+                    + '?versionCode=' \
+                    + version_code
 
         return self.__downloader(url=base_url, name=name, version_code=version_code)
 
