@@ -89,7 +89,7 @@ API.download(name='App Name', version='1.1.1', xapk=True)
 A class to interact with ApkPure for searching apps, retrieving app information, and downloading APK files.
 
 <details>
-  <summary><code>__init__(headers: dict | None = None) -> None</code></summary>
+  <summary><code>__init__(verbose : bool = True) -> None</code></summary>
   
   Initialize the `ApkPure`
 </details>
