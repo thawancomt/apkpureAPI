@@ -1,4 +1,4 @@
-Here is the "How to Use" text for the ApkPure API:
+Here is the "How to Use" ApkPure API:
 
 **Introduction**
 
@@ -53,9 +53,11 @@ To download an APK or XAPK, use the `download()` method and pass in the name of 
 ```python
 API.download('App Name')
 ```
-You can also specify a specific version to download by passing in the `version` parameter:
+You can also specify a specific version to download by passing in the `version` parameter and the `xapk` for true to download the xapk file:
 ```python
-API.download('App Name', '1.0.2')  # Download version 1.0.2
+API.download('App Name', '1.0.2', xapk=False)  # Download version 1.0.2
+# or if you want download a xapk
+API.download('App Name', '1.0.2', xapk=True)  # Download version 1.0.2 as xapk if it are available 
 ```
 
 **Tips and Tricks**
