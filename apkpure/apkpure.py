@@ -10,8 +10,9 @@ import cloudscraper
 from . import extractors as scraper
 
 class ApkPure:
-    def __init__(self) -> None:
+    def __init__(self, verbose = True) -> None:
         self.query_url = "https://apkpure.com/search?q="
+        self.verbose = verbose
 
     def __check_name(self, name : str) -> None :
         """Verify if the query is valid to avoid errors
@@ -27,6 +28,8 @@ class ApkPure:
             sys.exit(
                 "No search query provided!",
             )
+            
+        self.show_status('The query is accepted')
 
     def __soup_factory(self, url : str) -> BeautifulSoup:
         """Returns soup object from an given URL,
@@ -54,7 +57,10 @@ class ApkPure:
         __get_response("https://google.com", timeout = 10)
         Return: resquest.Response | None
         """
-
+        self.show_status(
+            f'Resquesting: {url}'
+        )
+            
         scraper = cloudscraper.create_scraper()
         response = scraper.get(url=url, **kwargs)
         
@@ -62,11 +68,15 @@ class ApkPure:
             sys.exit("Error: Request was blocked, try to update the ApkPure API!")
 
         return response if response.status_code == 200 else None
+    
+    def show_status(self, msg):
+        if self.verbose:
+            print(msg)
 
     
 
     def get_first_app_result(self, name: str) -> str | Exception:
-        
+
         """Get first app result from the search result page in ApkPure.
         Is harder to get app not found, because the search result is dynamic.
         To avoid the app not found, use the check_name method.
@@ -77,11 +87,15 @@ class ApkPure:
         """
         self.__check_name(name)
 
+        self.show_status(
+            f'Searching: {name}'
+        )
+
         query_url = self.query_url + name
         soup_obj = self.__soup_factory(query_url)
 
         first_div: BeautifulSoup = soup_obj.find("div", class_="first")
-        
+
         package_url = first_div.find("a", class_="first-info")
 
         if first_div is None:
@@ -90,7 +104,12 @@ class ApkPure:
         if package_url is None:
             package_url = first_div.find("a", class_="dd")
 
+        self.show_status('App found')
+
         result = scraper.extract_info_from_search(first_div)
+        self.show_status(
+            f'{name} information has been extracted'
+        )
 
         return json.dumps(result, indent=4)
     
@@ -113,6 +132,10 @@ class ApkPure:
         url = self.query_url + name
         soup = self.__soup_factory(url)
 
+        self.show_status(
+            f'Searching all results for {name} query'
+        )
+
         first_app = soup.find("div", class_="first")
 
         list_of_apps = soup.find("ul", id="search-res")  # UL
@@ -120,11 +143,17 @@ class ApkPure:
 
         all_results = [scraper.extract_info_from_search(first_app)] # add the first result from search to the all results
 
+        self.show_status(
+            f'The first app is: {all_results[0]}'
+        )
+
+        
         all_results.extend(
             scraper.extract_info_from_search(app)
             for app in apps_in_list_of_apps
         )
-        
+        self.show_status('The all has being added to the result')
+
         return json.dumps(all_results, indent=4)
 
     def get_versions(self, name : str ) -> str:
@@ -140,6 +169,10 @@ class ApkPure:
         self.__check_name(name)
         first_app_from_search : dict = json.loads(self.get_first_app_result(name))
         
+        self.show_status(
+            f'The first app is: {first_app_from_search.get('title')}'
+        )
+        
         version_url = str(first_app_from_search.get('package_url')) + "/versions"
         
         soup = self.__soup_factory(version_url)
@@ -149,12 +182,20 @@ class ApkPure:
         items : list[BeautifulSoup] = versions_list.find_all("li")
         items.pop() # Delete the last one item, cause its a bottom link
         
+        self.show_status(
+            f'Versions has been founded, {len(items)} versions founded'
+        )
+        
         all_versions : list[dict]= []
         
         all_versions = [
             scraper.extract_info_from_versions(item.find("a", class_="ver_download_link" ))
             for item in items
         ]
+        
+        self.show_status(
+            f'all the {len(items)} has been extracted'
+        )
         
         # for item in items:
         #     data : BeautifulSoup = item.find("a", class_="ver_download_link") # tag a
@@ -197,11 +238,18 @@ class ApkPure:
         first_app_from_search : dict = json.loads(top_app) # This variable already give us the needed information about the package
         # So dl_btn = divs.find("a", class_="download_apk_news").attrs is not necessary anymore
 
+        self.show_status(
+            f'{first_app_from_search.get('title')} basic information has been founded'
+        )
+        
         info_url =  str(first_app_from_search.get('package_url')) + '/download'
         html_obj = self.__soup_factory(info_url)
 
+        information = scraper.extract_info_from_get_info(html_obj)
+        self.show_status('Extracting more information')
+        
         return json.dumps(
-            scraper.extract_info_from_get_info(html_obj) | first_app_from_search,
+             information | first_app_from_search,
             indent=4
             )
         
@@ -220,21 +268,30 @@ class ApkPure:
         self.__check_name(name)
 
         app_type = 'XAPK' if xapk else 'APK'
+        
+        self.show_status(
+            f'Downloading {app_type} file from app {name}'
+        )
 
         package_info : dict = json.loads(self.get_info(name))
 
         version_code = None
         
         if version:
-            versions = json.loads(self.get_versions(name))
+            versions : list[dict]= json.loads(self.get_versions(name))
             for version_ in versions:
                 if str(version_.get('version')) == version:
                     version_code = version_.get("version_code")
+                    
                     break
 
             if not version_code:
-                print('The passed version is not founded')
-                version_code = version_code or package_info.get('package_version_code')
+                self.show_status('The passed version is not founded')
+        
+        version_code = version_code or package_info.get('package_version_code')
+        self.show_status(
+                        f'the version code was been setted to {version_code}'
+                        )
 
         base_url = f'https://d.apkpure.com/b/{app_type}/' \
                     + package_info.get('package_name') \
@@ -250,10 +307,18 @@ class ApkPure:
         response = self.__get_response(url=url, stream=True)
         file_size = int(response.headers.get('Content-Length', 0))
         
+        self.show_status(
+            f'The {name} app has {file_size / 1000000} MB size'
+        )
+        
         # handle the name of filename
         filename = response.headers.get('Content-Disposition').split('filename=')[1].replace('"', '').replace(" ", '').replace(';', '').replace(':', '')
         
-        with open(f'apks/{version_code}_{filename}', 'wb') as package_file:
+        self.show_status(
+            f'The file will be saved as {version_code}_{filename}'
+        )
+        
+        with open(f'{version_code}_{filename}', 'wb') as package_file:
             progress_bar = tqdm(total=file_size, unit='B', unit_scale=True, desc=f'Downloading {name}',dynamic_ncols=True, leave=True)
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:
