@@ -22,7 +22,7 @@ the reason is when I created the get response I can use it in all methods. avoin
 
 # 2 - I decided to use `cloudscraper` cause the ApkPure website is protected by Cloudflare.
 I used `cloudscraper` because it was easier for me to bypass its blocking.
-The original project was using requests, but I had problems with it, like getting 403 status code due to the Cloudflare protection.
+The original project was using `requests`, but I had problems with it, like getting 403 status code due to the Cloudflare protection.
 So I decided to use `cloudscraper`.
 
 # 3 - From the original project all the scrap methods was inside the method, in this version I decided to put all the scrap in a separated file.

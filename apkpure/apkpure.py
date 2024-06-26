@@ -253,7 +253,7 @@ class ApkPure:
         # handle the name of filename
         filename = response.headers.get('Content-Disposition').split('filename=')[1].replace('"', '').replace(" ", '').replace(';', '').replace(':', '')
         
-        with open(f'{filename}', 'wb') as package_file:
+        with open(f'apks/{version_code}_{filename}', 'wb') as package_file:
             progress_bar = tqdm(total=file_size, unit='B', unit_scale=True, desc=f'Downloading {name}',dynamic_ncols=True, leave=True)
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:
